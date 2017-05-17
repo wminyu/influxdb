@@ -1012,11 +1012,12 @@ func (itr *{{$k.name}}ChanIterator) Next() (*{{$k.Name}}Point, error) {
 
 // {{$k.name}}Reduce{{$v.Name}}Iterator executes a reducer for every interval and buffers the result.
 type {{$k.name}}Reduce{{$v.Name}}Iterator struct {
-	input    *buf{{$k.Name}}Iterator
-	create   func() ({{$k.Name}}PointAggregator, {{$v.Name}}PointEmitter)
-	dims     []string
-	opt      IteratorOptions
-	points   []{{$v.Name}}Point
+	input        *buf{{$k.Name}}Iterator
+	create       func() ({{$k.Name}}PointAggregator, {{$v.Name}}PointEmitter)
+	dims         []string
+	opt          IteratorOptions
+	points       []{{$v.Name}}Point
+	maintainTags bool
 }
 
 func new{{$k.Name}}Reduce{{$v.Name}}Iterator(input {{$k.Name}}Iterator, opt IteratorOptions, createFn func() ({{$k.Name}}PointAggregator, {{$v.Name}}PointEmitter)) *{{$k.name}}Reduce{{$v.Name}}Iterator {
@@ -1148,7 +1149,9 @@ func (itr *{{$k.name}}Reduce{{$v.Name}}Iterator) reduce() ([]{{$v.Name}}Point, e
 		points := rp.Emitter.Emit()
 		for i := len(points)-1; i >= 0; i-- {
 			points[i].Name = rp.Name
-			points[i].Tags = rp.Tags
+			if !itr.maintainTags {
+				points[i].Tags = rp.Tags
+			}
 			// Set the points time to the interval time if the reducer didn't provide one.
 			if points[i].Time == ZeroTime {
 				points[i].Time = startTime
