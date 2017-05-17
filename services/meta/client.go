@@ -406,7 +406,7 @@ func (c *Client) saltedHash(password string) (salt, hash []byte, err error) {
 }
 
 // CreateUser adds a user with the given name and password and admin status.
-func (c *Client) CreateUser(name, password string, admin bool) (*UserInfo, error) {
+func (c *Client) CreateUser(name, password string, admin bool) (User, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
