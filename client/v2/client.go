@@ -480,7 +480,7 @@ func (c *client) Query(q Query) (*Response, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", u.String(), nil)
+	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
